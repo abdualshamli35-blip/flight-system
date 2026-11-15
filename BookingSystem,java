@@ -1,0 +1,112 @@
+package customexcepdemoo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookingSystem {
+
+   
+    public static class BookingException extends Exception {
+        public BookingException(String message) {
+            super(message);
+        }
+    }
+
+    public static class InvalidPassportException extends BookingException {
+        public InvalidPassportException(String message) {
+            super(message);
+        }
+    }
+
+    public static class InvalidSeatException extends BookingException {
+        public InvalidSeatException(String message) {
+            super(message);
+        }
+    }
+
+    public static class FlightFullException extends BookingException {
+        public FlightFullException(String message) {
+            super(message);
+        }
+    }
+
+    public static class DuplicateBookingException extends BookingException {
+        public DuplicateBookingException(String message) {
+            super(message);
+        }
+    }
+
+    public static class SeatAlreadyBookedException extends BookingException {
+        public SeatAlreadyBookedException(String message) {
+            super(message);
+        }
+    }
+
+    public static class TicketNotFoundException extends BookingException {
+        public TicketNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    private List<Ticket> tickets = new ArrayList<>();
+    private int nextTicketId = 1;
+
+    public Ticket bookSeat(Passenger passenger, Flight flight, int seatNumber)
+            throws BookingException {
+
+        if (passenger == null || flight == null) {
+            throw new IllegalArgumentException("Passenger and flight must not be null");
+        }
+
+        String passport = passenger.getPassportNumber();
+        if (passport == null || !passport.matches("[A-Za-z0-9]{6,9}")) {
+            throw new InvalidPassportException("Invalid passport number: " + passport
+                    + " (must be 6-9 letters/digits)");
+        }
+
+        if (seatNumber < 1 || seatNumber > flight.getCapacity()) {
+            throw new InvalidSeatException("Seat " + seatNumber + " does not exist on flight "
+                    + flight.getFlightNumber() + " (1-" + flight.getCapacity() + ")");
+        }
+
+        if (flight.isFull()) {
+            throw new FlightFullException("Flight " + flight.getFlightNumber() + " is full");
+        }
+
+        for (Ticket t : tickets) {
+            Booking b = t.getBooking();
+            if (b.getFlight() == flight
+                    && b.getPassenger().getPassportNumber().equals(passport)) {
+                throw new DuplicateBookingException(passenger.getName()
+                        + " already has a booking on flight " + flight.getFlightNumber());
+            }
+        }
+
+        if (flight.isSeatTaken(seatNumber)) {
+            throw new SeatAlreadyBookedException("Seat " + seatNumber + " on flight "
+                    + flight.getFlightNumber() + " is already booked");
+        }
+
+        flight.reserveSeat(seatNumber);
+        Booking booking = new Booking(passenger, flight, seatNumber);
+        Ticket ticket = new Ticket(nextTicketId++, booking);
+        tickets.add(ticket);
+        return ticket;
+    }
+
+    public void cancelTicket(int ticketId) throws TicketNotFoundException {
+        for (Ticket t : tickets) {
+            if (t.getTicketId() == ticketId) {
+                Booking b = t.getBooking();
+                b.getFlight().releaseSeat(b.getSeatNumber());
+                tickets.remove(t);
+                return;
+            }
+        }
+        throw new TicketNotFoundException("No ticket with ID " + ticketId);
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+}
