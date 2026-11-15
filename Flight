@@ -1,0 +1,51 @@
+package customexcepdemoo;
+
+public class Flight {
+
+    private String flightNumber;
+    private String destination;
+    private int capacity;
+    private boolean[] seats;
+    private int bookedCount = 0;
+
+    public Flight(String flightNumber, String destination, int capacity) {
+        this.flightNumber = flightNumber;
+        this.destination = destination;
+        this.capacity = capacity;
+        this.seats = new boolean[capacity + 1]; 
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getAvailableSeats() {
+        return capacity - bookedCount;
+    }
+
+    public boolean isFull() {
+        return bookedCount >= capacity;
+    }
+
+    public boolean isSeatTaken(int seatNumber) {
+        return seats[seatNumber];
+    }
+
+    public void reserveSeat(int seatNumber) {
+        seats[seatNumber] = true;
+        bookedCount++;
+    }
+
+    public void releaseSeat(int seatNumber) {
+        seats[seatNumber] = false;
+        bookedCount--;
+    }
+}
