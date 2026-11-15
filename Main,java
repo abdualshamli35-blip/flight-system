@@ -1,0 +1,78 @@
+package customexcepdemoo;
+
+public class Main {
+
+    public static void main(String[] args) {
+        BookingSystem system = new BookingSystem();
+        Flight flight = new Flight("LY101", "Istanbul", 3);
+
+        Passenger ahmed = new Passenger("Ahmed Ali", "P1234567");
+        Passenger sara = new Passenger("Sara Omar", "P7654321");
+        Passenger omar = new Passenger("Omar Khaled", "P1111111");
+        Passenger noor = new Passenger("Noor Salem", "P2222222");
+        Passenger bad = new Passenger("Bad Passport", "12");
+
+        try {
+            Ticket t = system.bookSeat(ahmed, flight, 1);
+            t.printTicket();
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        try {
+            system.bookSeat(sara, flight, 1);
+        } catch (BookingSystem.SeatAlreadyBookedException e) {
+            System.out.println("[SeatAlreadyBooked] " + e.getMessage());
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("[Other] " + e.getMessage());
+        }
+
+        try {
+            system.bookSeat(sara, flight, 99);
+        } catch (BookingSystem.InvalidSeatException e) {
+            System.out.println("[InvalidSeat] " + e.getMessage());
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("[Other] " + e.getMessage());
+        }
+
+        try {
+            system.bookSeat(bad, flight, 2);
+        } catch (BookingSystem.InvalidPassportException e) {
+            System.out.println("[InvalidPassport] " + e.getMessage());
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("[Other] " + e.getMessage());
+        }
+
+        try {
+            system.bookSeat(ahmed, flight, 2);
+        } catch (BookingSystem.DuplicateBookingException e) {
+            System.out.println("[DuplicateBooking] " + e.getMessage());
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("[Other] " + e.getMessage());
+        }
+
+        try {
+            system.bookSeat(sara, flight, 2);
+            system.bookSeat(omar, flight, 3);
+            system.bookSeat(noor, flight, 3);
+        } catch (BookingSystem.FlightFullException e) {
+            System.out.println("[FlightFull] " + e.getMessage());
+        } catch (BookingSystem.BookingException e) {
+            System.out.println("[Other] " + e.getMessage());
+        }
+
+      
+        try {
+            system.cancelTicket(42);
+        } catch (BookingSystem.TicketNotFoundException e) {
+            System.out.println("[TicketNotFound] " + e.getMessage());
+        }
+
+        try {
+            system.cancelTicket(1);
+            System.out.println("Ticket 1 cancelled. Seats left: " + flight.getAvailableSeats());
+        } catch (BookingSystem.TicketNotFoundException e) {
+            System.out.println("[TicketNotFound] " + e.getMessage());
+        }
+    }
+}
