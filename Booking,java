@@ -1,1 +1,35 @@
+package customexcepdemoo;
 
+public class Booking {
+
+    private Passenger passenger;
+    private Flight flight;
+    private int seatNumber;
+
+    public Booking(Passenger passenger, Flight flight, int seatNumber) {
+        this.passenger = passenger;
+        this.flight = flight;
+        this.seatNumber = seatNumber;
+    }
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public int getSeatNumber() {
+        return seatNumber;
+    }
+
+    public void printTicket() {
+        System.out.println("---------- TICKET ----------");
+        System.out.println("Passenger : " + passenger.getName());
+        System.out.println("Passport  : " + passenger.getPassportNumber());
+        System.out.println("Flight    : " + flight.getFlightNumber() + " to " + flight.getDestination());
+        System.out.println("Seat      : " + seatNumber);
+        System.out.println("----------------------------");
+    }
+}
